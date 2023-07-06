@@ -9,18 +9,13 @@ import os
 
 
 def do_pack():
-    '''do_pack fabric:
+    '''function:
     generates a .tgz archive from the contents of the web_static folder
     '''
 
-    dt_now = datetime.utcnow()
+    now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
 
-    artifact = 'versions/web_static_{}{}{}{}{}{}.tgz'.format(dt_now.year,
-                                                             dt_now.month,
-                                                             dt_now.day,
-                                                             dt_now.hour,
-                                                             dt_now.minute,
-                                                             dt_now.second)
+    artifact = f'versions/web_static_{now}.tgz'
     if not os.path.exists('versions'):
         local('mkdir -p versions')
 
