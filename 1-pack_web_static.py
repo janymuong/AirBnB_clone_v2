@@ -5,6 +5,7 @@ create tarball artifact of static files in local
 
 from fabric.api import local
 from datetime import datetime
+import os
 
 
 def do_pack():
@@ -17,4 +18,10 @@ def do_pack():
     artifact = f'versions/web_static_{now}.tgz'
     local('mkdir -p versions')
     fab_stat = local(f'tar -czvf {artifact} web_static')
-    return artifact if fab_stat.succeeded else None
+
+    if fab_stat.succeeded:
+        size = os.path.getsize(artifact)
+        print(f'web_static packed: {artifact} -> {size}Bytes')
+        return artifact
+    else:
+        return None
