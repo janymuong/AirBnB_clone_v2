@@ -13,17 +13,17 @@ def do_pack():
     generates a .tgz archive from the contents of the web_static folder
     '''
 
-    now = datetime.utcnow()
-    artifact_name = 'web_static_' + now.strftime('%Y%m%d%H%M%S') + '.tgz'
-    artifact_path = 'versions/' + artifact_name
+    now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
 
+    artifact = f'versions/web_static_{now}.tgz'
+    print(f'Packing web_static to {artifact}')
     if not os.path.exists('versions'):
         local('mkdir -p versions')
 
-    result = local('tar -cvzf {} web_static'.format(artifact_path))
-    if result.failed:
+    fab_stat = local(f'tar -cvzf {artifact} web_static')
+    if fab_stat.succeeded:
+        size = os.path.getsize(artifact)
+        print(f'web_static packed: {artifact} -> {size}Bytes')
+        return artifact
+    else:
         return None
-
-    size = os.path.getsize(artifact_path)
-    print('web_static packed: {} -> {}Bytes'.format(artifact_path, size))
-    return artifact_path
