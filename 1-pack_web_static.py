@@ -19,8 +19,9 @@ def do_pack():
     if not os.path.exists('versions'):
         local('mkdir -p versions')
 
-    fab_stat = local(f'tar -cvzf {artifact} web_static')
+    fab_stat = local(f'tar -czvf {artifact} web_static')
     if fab_stat.succeeded:
+        local(f'chmod 664 {artifact}')
         size = os.path.getsize(artifact)
         print(f'web_static packed: {artifact} -> {size}Bytes')
         return artifact
