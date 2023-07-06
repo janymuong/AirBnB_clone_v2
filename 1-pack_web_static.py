@@ -12,7 +12,6 @@ def do_pack():
     '''function:
     generates a .tgz archive from the contents of the web_static folder
     '''
-
     now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
 
     artifact = f'versions/web_static_{now}.tgz'
@@ -22,7 +21,6 @@ def do_pack():
 
     fab_stat = local(f'tar -cvzf {artifact} web_static')
     if fab_stat.succeeded:
-        local(f'chmod 664 {artifact}')
         size = os.path.getsize(artifact)
         print(f'web_static packed: {artifact} -> {size}Bytes')
         return artifact
