@@ -1,29 +1,24 @@
 #!/usr/bin/python3
-'''module:
-create tarball artifact of static files in local
-'''
-
-from fabric.api import local
+# script that generates a .tgz archive from the
+# contents of the web_static folder of your AirBnB Clone repo
+# using the function do_pack
+import os.path
 from datetime import datetime
-import os
+from fabric.api import local
 
 
 def do_pack():
-    '''function:
-    generates a .tgz archive from the contents of the web_static folder
-    '''
-
-    now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-
-    artifact = f'versions/web_static_{now}.tgz'
-    if not os.path.exists('versions'):
-        local('mkdir -p versions')
-
-    fab_stat = local(f'tar -czvf {artifact} web_static')
-    if fab_stat.succeeded:
-        local(f'chmod 664 {artifact}')
-        size = os.path.getsize(artifact)
-        print(f'web_static packed: {artifact} -> {size}Bytes')
-        return artifact
-    else:
+    """Create a tar gzipped archive of the directory web_static."""
+    dt = datetime.utcnow()
+    artifact = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
+                                                         dt.month,
+                                                         dt.day,
+                                                         dt.hour,
+                                                         dt.minute,
+                                                         dt.second)
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
+            return None
+    if local("tar -cvzf {} web_static".format(artifact)).failed is True:
         return None
+    return artifact
