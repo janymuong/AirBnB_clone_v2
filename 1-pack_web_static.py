@@ -15,17 +15,12 @@ def do_pack():
 
     now = datetime.utcnow().strftime('%Y%m%d%H%M%S')
 
-    artifact = f'versions/web_static_{now}.tgz'
-    if not os.path.exists('versions'):
-        fab_res = local('mkdir -p versions')
-        if fab_res.failed is True:
-            return None
-
-    fab_stat = local(f'tar -czvf {artifact} web_static')
-
+    artifact = 'versions/web_static_{}.tgz'.format(now)
+    local('mkdir -p versions')
+    fab_stat = local('tar -czvf {} web_static'.format(artifact))
     if fab_stat.succeeded:
         size = os.path.getsize(artifact)
-        print(f'web_static packed: {artifact} -> {size}Bytes')
+        print('web_static packed: {} -> {}Bytes'.format(artifact, size))
         return artifact
     else:
         return None
