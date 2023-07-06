@@ -17,7 +17,10 @@ def do_pack():
 
     artifact = f'versions/web_static_{now}.tgz'
     if not os.path.exists('versions'):
-        local('mkdir -p versions')
+        fab_res = local('mkdir -p versions')
+        if fab_res.failed is True:
+            return None
+
     fab_stat = local(f'tar -czvf {artifact} web_static')
 
     if fab_stat.succeeded:
