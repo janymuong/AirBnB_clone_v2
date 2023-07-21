@@ -24,6 +24,7 @@ Flask is a lightweight [`WSGI`](https://wsgi.readthedocs.io/en/latest/) web appl
 Flask offers suggestions, but doesn't enforce any dependencies or project layout. It is up to the developer to choose the tools and libraries they want to use. There are many extensions provided by the community that make adding new functionality easy.
 ```bash
 $ cat app.py
+#!/usr/bin/python3
 from flask import Flask, request
 from markupsafe import escape
 
@@ -58,7 +59,7 @@ Jinja2 is a full-featured template engine for Python. It has full unicode suppor
 ```
 
 ## Flask - Jinja
-As an example, let's see how we can use Flask and Jinja2 to display a list of available listings on the homepage. First off, we define a route in a mock `app.py` to handle requests to the homepage.
+As an example, let's see how we can use Flask and Jinja2 to display a list of cities in a resource endpoint. First off, we define a route in a mock `app.py` to handle requests to the homepage.
 
 ```python
 @app.route('/hbnb/cities')
