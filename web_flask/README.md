@@ -93,8 +93,7 @@ In the `templates/index.html` template, we can use *Jinja2*'s `template` tags to
 
 When a user visits the cities page, Flask will execute the `cities()` function, fetch the cities from the database, and pass them to the `index.html` template. Jinja2 will then render the HTML with the information dynamically inserted into the page.
 
-## Refrence
+## References:
 
-- Flask - [What Flask Is](https://palletsprojects.com/p/flask/)
-- Jinja - [What Jinja Is](https://palletsprojects.com/p/jinja/)
+- About: [Flask](https://palletsprojects.com/p/flask/), [Jinja](https://palletsprojects.com/p/jinja/)
 - [Jinja Templating](https://jinja.palletsprojects.com/en/3.1.x/templates/)
