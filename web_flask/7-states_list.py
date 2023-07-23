@@ -20,7 +20,9 @@ def db_teardown(exception):
 
 @app.route('/states_list')
 def states_list():
-    '''Display a HTML page with the list of all State objects present in DBStorage.'''
+    '''Display a HTML page
+    with the list of all State objects present in DBStorage.
+    '''
     states = sorted(list(storage.all(State).values()), key=lambda s: s.name)
     return render_template('7-states_list.html', states=states)
 
