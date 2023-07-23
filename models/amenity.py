@@ -2,9 +2,10 @@
 """ Amenity Module for HBNB project """
 
 from os import getenv
+from models.base_model import BaseModel, Base
+import sqlalchemy
 from sqlalchemy import Table, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
-from models.base_model import BaseModel, Base
 
 
 class Amenity(BaseModel, Base):
@@ -16,14 +17,11 @@ class Amenity(BaseModel, Base):
     name = Column(String(128), nullable=False)
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        place_amenity = Table(
-            'place_amenity',
-            Base.metadata,
-            Column('place_id', String(60), ForeignKey('places.id'),
-                   nullable=False),
-            Column('amenity_id', String(60), ForeignKey('amenities.id'),
-                   nullable=False)
-        )
-        place_amenities = relationship('Place',
-                                       secondary='place_amenity',
-                                       back_populates='amenities')
+        __tablename__ = 'amenities'
+        name = Column(String(128), nullable=False)
+    else:
+        name = ''
+
+    def __init__(self, *args, **kwargs):
+        """initializes Amenity"""
+        super().__init__(*args, **kwargs)
