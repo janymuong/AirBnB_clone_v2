@@ -21,5 +21,6 @@ class Amenity(BaseModel, Base):
             Column('amenity_id', String(60), ForeignKey('amenities.id'),
                    nullable=False)
         )
-        place_amenities = relationship('Place', secondary='place_amenity', back_populates='amenities')
-
+        place_amenities = relationship('Place',
+                                       secondary='place_amenity',
+                                       back_populates='amenities')
