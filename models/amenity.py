@@ -1,21 +1,25 @@
 #!/usr/bin/python3
 """ Amenity Module for HBNB project """
 
-from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String
+from os import getenv
+from sqlalchemy import Table, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+from models.base_model import BaseModel, Base
 
 
 class Amenity(BaseModel, Base):
-    '''Amenity class
-    more like services eg WI-FI?
-    '''
     __tablename__ = 'amenities'
 
     name = Column(String(128), nullable=False)
-    place_amenities = relationship("Place", secondary='place_amenity',
-                                   viewonly=False)
 
-    def __init__(self, *args, **kwargs):
-        '''initializes Amenity'''
-        super().__init__(*args, **kwargs)
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        place_amenity = Table(
+            'place_amenity',
+            Base.metadata,
+            Column('place_id', String(60), ForeignKey('places.id'),
+                   nullable=False),
+            Column('amenity_id', String(60), ForeignKey('amenities.id'),
+                   nullable=False)
+        )
+        place_amenities = relationship('Place', secondary='place_amenity', back_populates='amenities')
+
