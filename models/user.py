@@ -24,6 +24,8 @@ class User(BaseModel, Base):
                               passive_deletes=True)
         reviews = relationship('Review', cascade='all, delete', backref='user',
                                passive_deletes=True)
+        # set default charset to match the db dump charset:
+        __table_args__ = {'mysql_default_charset': 'latin1'}
     else:
         email = ''
         password = ''
