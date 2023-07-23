@@ -4,15 +4,21 @@ DBStorage module for HBNB project
 '''
 
 from os import environ
+import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session, sessionmaker
+
+import models
 from models.base_model import BaseModel, Base
-from models.state import State
-from models.city import City
 from models.user import User
+from models.city import City
+from models.state import State
 from models.place import Place
-from models.review import Review
 from models.amenity import Amenity
+from models.review import Review
+
+classes = {'State': State, 'City': City, 'User': User,
+           'Place': Place, 'Review': Review, 'Amenity': Amenity}
 
 
 class DBStorage():
@@ -44,26 +50,14 @@ class DBStorage():
 
     def all(self, cls=None):
         '''query all objects from the database'''
-        objects = {}
-
-        classes = {'State': State, 'City': City, 'User': User, 'Place': Place,
-                   'Review': Review, 'Amenity': Amenity}
-
-        if cls:
-            if isinstance(cls, str) and cls in classes:
-                cls = eval(cls)
-            if cls in classes:
-                objs = self.__session.query(cls).all()
+        new_dict = {}
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                objs = self.__session.query(classes[clss]).all()
                 for obj in objs:
-                    key = f'{type(obj).__name__}.{obj.id}'
-                    objects[key] = obj
-        else:
-            for key in classes.keys():
-                objs = self.__session.query(classes[key]).all()
-                for obj in objs:
-                    key = f'{type(obj).__name__}.{obj.id}'
-                    objects[key] = obj
-        return objects
+                    key = f'{obj.__class__.__name__}.{obj.id}'
+                    new_dict[key] = obj
+        return (new_dict)
 
     def new(self, obj):
         '''add a new object to the database session'''
