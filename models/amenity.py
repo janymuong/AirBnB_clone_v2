@@ -8,7 +8,7 @@ from models.base_model import BaseModel, Base
 
 
 class Amenity(BaseModel, Base):
-    '''class for amenity: 
+    '''class for amenity:
     like services eg WIFI
     '''
     __tablename__ = 'amenities'

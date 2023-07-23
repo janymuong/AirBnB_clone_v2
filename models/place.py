@@ -2,17 +2,31 @@
 """ Place Module for HBNB project """
 
 from os import getenv
+import models
 from models.base_model import BaseModel, Base
-from models.review import Review
+import sqlalchemy
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
+# association table probably:
+if getenv('HBNB_TYPE_STORAGE') == 'db':
+    place_amenity = Table('place_amenity', Base.metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey('places.id', onupdate='CASCADE',
+                                            ondelete='CASCADE'),
+                                 primary_key=True),
+                          Column('amenity_id', String(60),
+                                 ForeignKey('amenities.id', onupdate='CASCADE',
+                                            ondelete='CASCADE'),
+                                 primary_key=True))
+
 
 class Place(BaseModel, Base):
-    """A place to stay"""
-    __tablename__ = 'places'
-
-    if getenv('HBNB_TYPE_STORAGE') is not None:
+    '''place to stay:
+    Representation of Place
+    '''
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        __tablename__ = 'places'
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
         name = Column(String(128), nullable=False)
@@ -23,24 +37,15 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        reviews = relationship('Review', cascade='all, delete',
-                               backref='place', passive_deletes=True)
-
-        if getenv('HBNB_TYPE_STORAGE') == 'db':
-            place_amenity = Table(
-                'place_amenity', Base.metadata,
-                Column('place_id', String(60), ForeignKey('places.id'),
-                       primary_key=True, nullable=False),
-                Column('amenity_id', String(60), ForeignKey('amenities.id'),
-                       primary_key=True, nullable=False)
-            )
-            amenities = relationship('Amenity', secondary=place_amenity,
-                                     viewonly=False)
+        reviews = relationship('Review', backref='place')
+        amenities = relationship('Amenity', secondary='place_amenity',
+                                 backref='place_amenities',
+                                 viewonly=False)
     else:
-        city_id = ""
-        user_id = ""
-        name = ""
-        description = ""
+        city_id = ''
+        user_id = ''
+        name = ''
+        description = ''
         number_rooms = 0
         number_bathrooms = 0
         max_guest = 0
@@ -49,15 +54,32 @@ class Place(BaseModel, Base):
         longitude = 0.0
         amenity_ids = []
 
-    if getenv('HBNB_TYPE_STORAGE') != 'db':
+    def __init__(self, *args, **kwargs):
+        '''initializes Place'''
+        super().__init__(*args, **kwargs)
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
         @property
         def reviews(self):
             '''getter attribute reviews
             returns the list of Review instances
             with place_id equals to the current Place.id
             '''
+            from models.review import Review
             review_list = []
-            for review in models.storage.all(Review).values():
+            all_reviews = models.storage.all(Review)
+            for review in all_reviews.values():
                 if review.place_id == self.id:
                     review_list.append(review)
             return review_list
+
+        @property
+        def amenities(self):
+            """getter attribute returns the list of Amenity instances"""
+            from models.amenity import Amenity
+            amenity_list = []
+            all_amenities = models.storage.all(Amenity)
+            for amenity in all_amenities.values():
+                if amenity.place_id == self.id:
+                    amenity_list.append(amenity)
+            return amenity_list

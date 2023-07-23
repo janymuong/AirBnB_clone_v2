@@ -14,7 +14,7 @@ class User(BaseModel, Base):
 
     __tablename__ = 'users'
 
-    if getenv('HBNB_TYPE_STORAGE') is not None:
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
 
         email = Column(String(128), nullable=False)
         password = Column(String(128), nullable=False)
@@ -29,3 +29,7 @@ class User(BaseModel, Base):
         password = ''
         first_name = ''
         last_name = ''
+
+    def __init__(self, *args, **kwargs):
+        """initializes user"""
+        super().__init__(*args, **kwargs)
